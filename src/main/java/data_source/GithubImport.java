@@ -10,10 +10,12 @@ public class GithubImport implements Testable{
 	Grabber githubGrabber;
 	PopulateJavaFile populator;
 	Scanner in;
+	ArrayList<String> githubClasses;
 	
 	public GithubImport()
 	{
 		in = new Scanner(System.in);
+		githubClasses = new ArrayList<>();
 	}
 	
 	
@@ -36,8 +38,10 @@ public class GithubImport implements Testable{
 		
 		String fileURL = "data_source." + githubGrabber.getFileName().replace(".java", "");
 		
-		ArrayList<String> githubClasses = new ArrayList<String>();
 		githubClasses.add(fileURL);
+		
+		System.out.println("Would you like to Import More?(Y/N)");
+		if(in.nextLine().equals("Y")) this.generateClasses();
 		
 		return githubClasses;
 	}

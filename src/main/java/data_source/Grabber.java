@@ -80,7 +80,7 @@ public class Grabber {
 	public void apiGrabber() throws IOException
 	{
 		
-		String urlString = "https://api.github.com/repos/" + this.userName+ "/" + this.repoName + "/contents/" + this.path;
+		String urlString = "https://api.github.com/repos/" + this.userName + "/" + this.repoName + "/contents/" + this.path;
 		String contentType = null;
 		int status = 0;
 		URL url = null;
