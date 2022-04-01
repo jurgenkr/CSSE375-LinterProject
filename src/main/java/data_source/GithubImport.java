@@ -1,5 +1,6 @@
 package data_source;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,11 +12,18 @@ public class GithubImport implements Testable{
 	PopulateJavaFile populator;
 	Scanner in;
 	ArrayList<String> githubClasses;
+	ArrayList<File> fileList;
 	
 	public GithubImport()
 	{
 		in = new Scanner(System.in);
 		githubClasses = new ArrayList<>();
+		fileList = new ArrayList<>();
+	}
+	
+	public ArrayList<File> getFileList()
+	{
+		return this.fileList;
 	}
 	
 	
@@ -28,6 +36,8 @@ public class GithubImport implements Testable{
 		
 		populator = new PopulateJavaFile(githubGrabber.getDownloadURL(),
 				githubGrabber.getFileName());
+		
+		fileList.add(populator.getPopulatedFile());
 		
 		try {
 			Thread.sleep(3000);

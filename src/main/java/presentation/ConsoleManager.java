@@ -1,5 +1,6 @@
 package presentation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -51,6 +52,15 @@ public class ConsoleManager {
 		}
 		
 		runner = new CheckRunner(testingMethod.generateClasses());
+		
+		if(testingMethod instanceof GithubImport)
+		{
+			ArrayList<File> fileList = ((GithubImport) testingMethod).getFileList();
+			for(int i = 0; i < fileList.size(); i++)
+			{
+				fileList.get(i).delete();
+			}
+		}
 		
 //		CheckRunner runner = new CheckRunner(args);
 		System.out.println("Classes inputted: \n" + runner.classNames());
