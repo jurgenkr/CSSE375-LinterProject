@@ -9,16 +9,30 @@ import data_source.MyLineNumberNode;
 import data_source.MyMethodNode;
 import data_source.MyVarInsnNode;
 
-public class UnusedInstantiationCheck implements SingleClassCheck {
+public class UnusedInstantiationCheck implements ClassCheck {
 	
-	private MyMethodNode method;
-	private ArrayList<MyFieldInsnNode> fieldStoring = new ArrayList<>();
-	private ArrayList<MyFieldInsnNode> fieldLoading = new ArrayList<>();
+	FieldStates fieldStates = new FieldStates();
 	
 	@Override
-	public String runCheck(MyClassNode classNode) {
-		fieldStoring.removeAll(fieldStoring);
-		fieldLoading.removeAll(fieldLoading);
+	public String runCheck(ArrayList<MyClassNode> classes) {
+		String printString = "";
+		for (MyClassNode classNode : classes) {
+			String classString = "";
+			classString += "	Class: " + classNode.getCleanName() + "\n";
+			classString += this.unusedInstantiationCheck(classNode);
+			if (!classString.equals("	Class: " + classNode.getCleanName() + "\n")) {
+				 printString += classString;
+			}
+		}
+		
+		if (printString == "") {
+			return printString;
+		}
+		return "Unused Instantiation Check:\n" + printString;
+	}
+	
+	private String unusedInstantiationCheck(MyClassNode classNode) {
+		fieldStates.empty();
 		
 		String varString = "";
 		for (MyMethodNode method : classNode.methods) {
@@ -27,19 +41,19 @@ public class UnusedInstantiationCheck implements SingleClassCheck {
 		String printString = findUnusedFields(classNode);
 		
 		if (!printString.equals("")) {
-			printString = "	Unused Variables: \n" + printString + varString;
+			printString = "		Unused Variables: \n" + printString + varString;
 		}
 		return printString;
 	}
 	
-	private String findUnusedFields(MyClassNode classNode) {
+	String findUnusedFields(MyClassNode classNode) {
 		String printString = "";
 		ArrayList<String> loadedNames = new ArrayList<>();
-		for (MyFieldInsnNode var : fieldLoading) {
+		for (MyFieldInsnNode var : fieldStates.fieldLoading) {
 			loadedNames.add(var.name);
 		}
 		ArrayList<MyFieldInsnNode> unusedStored = new ArrayList<>();
-		for (MyFieldInsnNode var : fieldStoring) {
+		for (MyFieldInsnNode var : fieldStates.fieldStoring) {
 			if (!loadedNames.contains(var.name)) {
 				unusedStored.add(var);
 			}
@@ -47,35 +61,32 @@ public class UnusedInstantiationCheck implements SingleClassCheck {
 		
 		for (MyFieldInsnNode var : unusedStored) {
 			boolean found = false;
-			for (MyMethodNode method : classNode.methods) {
-				int index = method.instructions.indexOf(var);
+			for (MyMethodNode mNode : classNode.methods) {
+				int index = mNode.instructions.indexOf(var);
 				int line = 0;
 				if (index != -1) {
-					this.method = method;
-					line = findLineNumber(index);
-					printString += "		Line " + line + ": Unused field named " + var.name + "\n";
+					line = findLineNumber(index, mNode);
+					printString += "			Line " + line + ": Unused field named " + var.name + "\n";
 					found = true;
 				}
 			}
 			if (!found) {
-				printString += "		Unknown line number: Unused field named " + var.name + "\n";
+				printString += "			Unknown line number: Unused field named " + var.name + "\n";
 			}
-			
 		}
 		
 		return printString;
 	}
 	
-	private void determineFieldStatus(MyFieldInsnNode fInsn) {
+	void determineFieldStatus(MyFieldInsnNode fInsn) {
 		if (fInsn.isLoading()) {
-			fieldLoading.add(fInsn);
+			fieldStates.fieldLoading.add(fInsn);
 		} else {						
-			fieldStoring.add(fInsn);
+			fieldStates.fieldStoring.add(fInsn);
 		}
 	}
 	
-	private String findVariablesMethods(MyMethodNode method) {
-		this.method = method;
+	String findVariablesMethods(MyMethodNode method) {
 		LinkedList<MyAbstractInsnNode> instructions = method.instructions;
 		ArrayList<MyVarInsnNode> loading = new ArrayList<>();
 		ArrayList<MyVarInsnNode> storing = new ArrayList<>();
@@ -92,10 +103,10 @@ public class UnusedInstantiationCheck implements SingleClassCheck {
 				determineFieldStatus(fInsn);
 			}
 		}
-		return findUnusedVariables(loading, storing);
+		return findUnusedVariables(loading, storing, method);
 	}
 	
-	private String findUnusedVariables(ArrayList<MyVarInsnNode> loaded, ArrayList<MyVarInsnNode> stored) {
+	String findUnusedVariables(ArrayList<MyVarInsnNode> loaded, ArrayList<MyVarInsnNode> stored, MyMethodNode method) {
 		String printString = "";
 		ArrayList<Integer> loadedIndexes = new ArrayList<>();
 		for (MyVarInsnNode var : loaded) {
@@ -109,25 +120,25 @@ public class UnusedInstantiationCheck implements SingleClassCheck {
 		}
 		
 		for (MyVarInsnNode var : unusedStored) {
-			int line = findLineNumber(this.method.instructions.indexOf(var));
-			if (var.var >= this.method.localVariables.size()) {
-				printString += "		Line " + line + ": Unused variable in method " + this.method.name + "\n";
+			int line = findLineNumber(method.instructions.indexOf(var), method);
+			if (var.var >= method.localVariables.size()) {
+				printString += "			Line " + line + ": Unused variable in method " + method.name + "\n";
 			} else {
-				String name = this.method.localVariables.get(var.var).name;
-				printString += "		Line " + line + ": Unused variable named " + name + " in method " + this.method.name + "\n";
+				String name = method.localVariables.get(var.var).name;
+				printString += "			Line " + line + ": Unused variable named " + name + " in method " + method.name + "\n";
 			}
 		}
 		
 		return printString;
 	}
 	
-	private int findLineNumber(int index) {
-		MyAbstractInsnNode node = this.method.instructions.get(index);
+	int findLineNumber(int index, MyMethodNode method) {
+		MyAbstractInsnNode node = method.instructions.get(index);
 		if (node.getType() == MyAbstractInsnNode.LINE) {
 			MyLineNumberNode lNode = (MyLineNumberNode) node;
 			return lNode.line;
 		} else {
-			return findLineNumber(index - 1);
+			return findLineNumber(index - 1, method);
 		}
 	}
 	

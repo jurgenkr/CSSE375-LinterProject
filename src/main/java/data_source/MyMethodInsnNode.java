@@ -1,15 +1,18 @@
 package data_source;
 
+import org.objectweb.asm.Opcodes;
+
 public class MyMethodInsnNode extends MyAbstractInsnNode{
 
 	public String name;
-	public String owner;
+	private String owner;
 	private boolean invokeVirtual; 
 	
-	public MyMethodInsnNode(String name, String owner, boolean invokeVirtual) {
+	public MyMethodInsnNode(String name, String owner, int opcode) {
 		this.name = name;
 		this.owner = owner;
-		this.invokeVirtual = invokeVirtual;
+		
+		this.invokeVirtual = ((opcode & Opcodes.INVOKEVIRTUAL) != 0);
 	}
 	
 	public boolean isInvokeVirtual() {
@@ -19,6 +22,15 @@ public class MyMethodInsnNode extends MyAbstractInsnNode{
 	@Override
 	public int getType() {
 		return super.METHOD_INSN;
+	}
+	
+	public String getFullOwner() {
+		return owner;
+	}
+	
+	public String getCleanOwner() {
+		String[] nameSplit = owner.split("/");
+		return nameSplit[nameSplit.length-1];
 	}
 
 }

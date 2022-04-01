@@ -10,43 +10,36 @@ import data_source.FileWriter;
 public class CheckRunner {
 
 	private ArrayList<MyClassNode> classes;
-	private ArrayList<MultiClassCheck> multiChecks;
-	private ArrayList<SingleClassCheck> singleChecks;
+	private ArrayList<MyClassNode> deleted;
+	private ArrayList<ClassCheck> checks;
 	private FileWriter fileWriter;
-	
-	public CheckRunner(String[] args) {
-		this.classes = ASMReader.generateClassNodes(args);
-		this.multiChecks = new ArrayList<>();
-		this.singleChecks = new ArrayList<>();
+	public CheckRunner(ArrayList<String> testableClasses) {
+		this.classes = ASMReader.generateClassNodes(testableClasses);
+		this.checks = new ArrayList<>();
+		this.deleted = new ArrayList<>();
 		this.fileWriter = new FileWriter("LintOutput.txt");
 	}
 	
 	public String classNames() {
 		String printString = "";
 		for (int i = 0; i < classes.size(); i++) {
-			printString += "	" + classes.get(i).name + "\n";
+			printString += "	" + classes.get(i).getCleanName() + "\n";
+		}
+		return printString;
+	}
+	
+	public String deletedClassNames() {
+		String printString = "";
+		for (int i = 0; i < deleted.size(); i++) {
+			printString += "	" + deleted.get(i).getCleanName() + "\n";
 		}
 		return printString;
 	}
 	
 	public String runChecks() {
 		String printString = "";
-		// Style Checks
-		for (MyClassNode classNode : this.classes) {
-			String classString = "";
-			classString += "Class: " + classNode.name + "\n";
-			
-			for (SingleClassCheck check : singleChecks) {
-				classString += check.runCheck(classNode);
-			}
-			
-			classString += "\n";
-			if (!classString.equals("Class: " + classNode.name + "\n\n")) {
-				 printString += classString;
-			}
-		}
-		
-		for (MultiClassCheck check : multiChecks) {
+
+		for (ClassCheck check : checks) {
 			printString += check.runCheck(this.classes);
 		}
 		if (printString.equals("")) {
@@ -60,26 +53,39 @@ public class CheckRunner {
 	public String getChecks() {
 		String printString = "";
 		printString += "Running checks: \n";
-		for (SingleClassCheck check : singleChecks) {
-			printString += "	" + check.getName() + "\n";
-		}
-		for (MultiClassCheck check : multiChecks) {
+		for (ClassCheck check : checks) {
 			printString += "	" + check.getName() + "\n";
 		}
 		return printString;
 	}
 	
-	public void addSingleCheck(SingleClassCheck check) {
-		singleChecks.add(check);
-	}
 	
-	public void addMultiCheck(MultiClassCheck check) {
-		multiChecks.add(check);
+	public void addCheck(ClassCheck check) {
+		checks.add(check);
 	}
 	
 	public void resetChecks() {
-		singleChecks.removeAll(singleChecks);
-		multiChecks.removeAll(multiChecks);
+		checks.removeAll(checks);
+	}
+	
+	public boolean removeClass(String toRemove) {
+		for (int i = 0; i < classes.size(); i++) {
+			if (classes.get(i).getCleanName().equals(toRemove)) {
+				deleted.add(classes.remove(i));
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean reAddClass(String toAdd) {
+		for (int i = 0; i < deleted.size(); i++) {
+			if (deleted.get(i).getCleanName().equals(toAdd)) {
+				classes.add(deleted.remove(i));
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

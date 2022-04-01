@@ -6,7 +6,7 @@ import java.util.HashMap;
 import data_source.MyClassNode;
 
 
-public class RedundantInterfaceCheck implements MultiClassCheck {
+public class RedundantInterfaceCheck implements ClassCheck {
 	
 	@Override
 	public String runCheck(ArrayList<MyClassNode> classes) {
@@ -14,7 +14,7 @@ public class RedundantInterfaceCheck implements MultiClassCheck {
 		HashMap<String, Integer> interfaces = new HashMap<>();
 		for (MyClassNode node : classes) {
 			if (node.isInterface()) {
-				interfaces.put(node.name, 0);
+				interfaces.put(node.getCleanName(), 0);
 			}
 		}
 		for (MyClassNode node : classes) {

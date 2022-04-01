@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import data_source.MyClassNode;
 
-public class CompositionCheck implements MultiClassCheck {
+public class CompositionCheck implements ClassCheck {
 
 	@Override
 	public String runCheck(ArrayList<MyClassNode> classes) {
@@ -16,13 +16,11 @@ public class CompositionCheck implements MultiClassCheck {
 		return printString;
 	}
 
-	private String checkClassComposition(MyClassNode classNode) {
-		String[] className = classNode.name.split("/");
-		String[] superName = classNode.superName.split("/");
-		if (!superName[0].equals("java"))
+	String checkClassComposition(MyClassNode classNode) {
+		if (!(classNode.isSuperBuiltIn()))
 			return String.format(
 					"	Class %s inherits from user created class %s. Could composition be used instead? \n",
-					className[className.length - 1], superName[superName.length - 1]);
+					classNode.getCleanName(), classNode.getCleanSuperName());
 		return "";
 	}
 	

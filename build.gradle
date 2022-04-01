@@ -27,6 +27,9 @@ dependencies {
     
     // Use EasyMock framework
     testCompile 'junit:junit:4.+', 'org.easymock:easymock:3.4'
+    
+    // https://mvnrepository.com/artifact/org.json/json
+	implementation 'org.json:json:20090211'
 }
 
 application {
