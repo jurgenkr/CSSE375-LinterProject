@@ -22,7 +22,7 @@ class CompositionCheckIntegrationTest {
 	
 	@Test
 	void testCompositionGood() {
-		MyClassNode curClass = new MyClassNode("goodComposition", "/java/lang/object/good", null, null, null, 0);
+		MyClassNode curClass = new MyClassNode("goodComposition", "java/lang/object/good", null, null, null, 0);
 		
 		String expected = "";
 		

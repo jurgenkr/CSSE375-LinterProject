@@ -21,6 +21,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,6 +31,7 @@ import data_source.Directory;
 import data_source.GithubImport;
 import data_source.Grabber;
 import data_source.PopulateJavaFile;
+import data_source.Testable;
 import domain.AdapterPatternCheck;
 import domain.CheckRunner;
 import domain.CompositionCheck;
@@ -43,6 +47,7 @@ public class GUIManager {
 	static Grabber githubGrabber;
 	static PopulateJavaFile populator;
 	static Directory directory;
+	Testable githubImport;
 	JFrame importFrame;
 
 	public void filesToCheck() {
@@ -354,9 +359,14 @@ public class GUIManager {
 		JFrame runFrame = new JFrame("Check Outputs");
 		runFrame.setPreferredSize(new Dimension(1000,900));
 		JPanel runPanel = new JPanel();
+
+		JTextArea output = new JTextArea(50, 70);
+		output.setText(runner.runChecks());
+		output.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(output);
+		scrollPane.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+		runPanel.add(scrollPane, BorderLayout.WEST);
 		
-		JTextArea output = new JTextArea(runner.runChecks());
-		runPanel.add(output, BorderLayout.WEST);
 		
 		JButton restartButton = new JButton("Restart");
 		restartButton.addActionListener(new ActionListener() {
@@ -365,6 +375,9 @@ public class GUIManager {
             	filesToCheck();
             }
 		});
+		
+		
+		
 		runPanel.add(restartButton, BorderLayout.SOUTH);
 		
 		JButton exitButton = new JButton("Exit");
@@ -378,5 +391,8 @@ public class GUIManager {
 		runFrame.add(runPanel);
 		runFrame.pack();
 		runFrame.setVisible(true);
+		
+		((GithubImport) githubImport).getGrabber().deleteFiles();
+		
 	}
 }

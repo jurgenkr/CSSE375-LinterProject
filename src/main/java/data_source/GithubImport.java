@@ -1,6 +1,5 @@
 package data_source;
 
-import java.io.File;
 import java.io.IOException;
 import static java.nio.file.StandardWatchEventKinds.*;
 import java.nio.file.FileSystems;
@@ -12,8 +11,6 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
-
-import domain.CheckRunner;
 
 public class GithubImport implements Testable{
 

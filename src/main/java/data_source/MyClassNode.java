@@ -46,7 +46,7 @@ public class MyClassNode {
 	
 	public boolean isSuperBuiltIn() {
 		String[] nameSplit = superName.split("/");
-		return nameSplit[1].contains("java");
+		return nameSplit[0].contains("java");
 	}
 	
 	public ArrayList<String> getInterfaces() {

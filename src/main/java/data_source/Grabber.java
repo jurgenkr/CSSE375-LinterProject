@@ -17,10 +17,12 @@ import org.json.JSONObject;
 
 public class Grabber {
 	
-	private String userName;
-	private String repoName;
-	private String path;
+//	private String userName;
+//	private String repoName;
+//	private String path;
 	private String jsonString;
+	
+	private GithubPathInformation GPI;
 	
 	ArrayList<File> fileList;
 	HashMap<String, String> jsonInformation;
@@ -34,7 +36,7 @@ public class Grabber {
 		jsonInformation = new HashMap<>();
 		fileList = new ArrayList<>();
 		controlFlagJavaFile = false;
-		this.grabCreds(url);
+		this.GPI = new GithubPathInformation(url);
 		try {
 			this.apiGrabber();
 		} catch (IOException e) {
@@ -67,45 +69,20 @@ public class Grabber {
 	{
 		this.fileList = fileList;
 	}
-
-	public void grabCreds(String URL)
-	{	
-		String githubURL = URL.substring(0, 19);
-		
-		if(!githubURL.equals("https://github.com/"))
-		{
-			System.out.println("This is not a github URL");
-		}
-		
-		String stringWithoutGithub = URL.substring(19);
-		
-		System.out.println(stringWithoutGithub);
-	
-		String[] spilt = stringWithoutGithub.split("/");
-		
-		this.userName = spilt[0];
-		this.repoName = spilt[1];
-		//3 = blob
-		//4 = main
-		//5+ = path
-		
-		ArrayList<String> pathList = new ArrayList<>();
-		for(int i = 4; i < spilt.length; i++)
-		{
-			pathList.add(spilt[i]);
-//			if(i == spilt.length-1) this.fileName.add(spilt[i]);
-		}	
-		this.path = String.join("/", pathList);
-	}
 	
 	public void apiGrabber() throws IOException
 	{
-//		https://api.github.com/repos/rhit-webbma/ShoppingCartAPI/contents/src
+		String userName = this.GPI.getUserName();
+		
+		
+		String urlString = "https://api.github.com/repos/" 
+		+ GPI.getUserName() 
+		+ "/" 
+		+ GPI.getRepoName() 
+		+ "/contents/" 
+		+ GPI.getPath();
 
-
-		String urlString = "https://api.github.com/repos/" + this.userName+ "/" + this.repoName + "/contents/" + this.path;
-
-		if(this.path.endsWith(".java"))
+		if(GPI.getPath().endsWith(".java"))
 		{
 			controlFlagJavaFile = true;
 		}

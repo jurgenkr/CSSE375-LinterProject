@@ -24,7 +24,7 @@ class MyClassNodeTest {
 
 	@Test
 	void testIsSuperBuiltInTrue() {
-		MyClassNode node = new MyClassNode(null, "L;main/java/package/Class2", null, null, null, 0);
+		MyClassNode node = new MyClassNode(null, "L;java/package/Class2", null, null, null, 0);
 		assertTrue(node.isSuperBuiltIn());
 	}
 	

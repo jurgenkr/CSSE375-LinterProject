@@ -1,0 +1,12 @@
+The plan for testing our system is as follows:
+Unit Testing:
+  - Using Mocks to limit external dependency, write unit tests for all bytecode representations and linter checks
+  - Test edge case scenarios in all of these tests
+  
+Integration Testing:
+  - Utilizing the already written unit tests, write integration tests that mimic realistic system states
+  - Modify existing code to be more available to this level of testing
+  
+Acceptance Testing:
+  - Using the console form of interacting with the system, write tests that mimic actual system states
+  - Check correctness of the system by examining console output based on specific inputs

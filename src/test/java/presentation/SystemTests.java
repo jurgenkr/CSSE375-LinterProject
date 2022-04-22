@@ -221,7 +221,6 @@ class SystemTests {
 				"\n" + 
 				"Composition Over Inheritance: \n" + 
 				"	Class badClass$ inherits from user created class superBadClass$. Could composition be used instead? \n" + 
-				"	Class superBadClass$ inherits from user created class Object. Could composition be used instead? \n" + 
 				"\r\n" + 
 				"Input the name of the check you would like to run:", outContent.toString().trim());
 	}
@@ -589,7 +588,6 @@ class SystemTests {
 				"\n" + 
 				"Composition Over Inheritance: \n" + 
 				"	Class badClass$ inherits from user created class superBadClass$. Could composition be used instead? \n" + 
-				"	Class superBadClass$ inherits from user created class Object. Could composition be used instead? \n" + 
 				"\r\n" + 
 				"Input the name of the check you would like to run:", outContent.toString().trim());
 	}
@@ -713,7 +711,6 @@ class SystemTests {
 		assertEquals("Would you like to input with GUI or Console? [GUI, Console]\r\n" + 
 				"What type of Import would you like to do: \r\n" + 
 				"Please Input a Github Link: \r\n" + 
-				"TheAlgorithms/Java/blob/master/src/main/java/com/thealgorithms/searches/BinarySearch.java\r\n" + 
 				"File: BinarySearch.java has been created!\r\n" + 
 				"Classes inputted: \n" + 
 				"	BinarySearch\n" + 
@@ -733,8 +730,7 @@ class SystemTests {
 				"	BinarySearch\n" + 
 				"\n" + 
 				"\n" + 
-				"Composition Over Inheritance: \n" + 
-				"	Class BinarySearch inherits from user created class Object. Could composition be used instead? \n" + 
+				"No principle violations detected!\n" +
 				"\r\n" + 
 				"Input the name of the check you would like to run:", outContent.toString().trim());
 	}
